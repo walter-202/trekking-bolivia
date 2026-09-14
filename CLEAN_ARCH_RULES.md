@@ -62,6 +62,12 @@ presentation/
 
 Antes de escribir un input, botón, banner, card o empty-state:
 
+## 3b. Alcance: solo lo que pide la HU
+
+Cada campo/botón visible debe trazarse a un criterio (`HU-0X Cn`). Nada fuera de criterios
+se implementa sin preguntar antes (ver `AGENTS.md` → Alcance por HU). En review, campo sin
+criterio = hallazgo major.
+
 1. Mira `components/native/index.ts` — ¿ya existe? Úsalo.
 2. `grep` en `views/` — ¿otro feature ya lo resolvió? Extrae el común a `native/`, no copies.
 3. ¿Es patrón de composición (variantes, compound)? Carga `vercel-composition-patterns`

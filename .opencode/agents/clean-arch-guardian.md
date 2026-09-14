@@ -23,5 +23,6 @@ Reglas:
 - RBAC (`user|moderator|admin`): moderación y gestión de usuarios exigen rol en servicio + rules (`firestore.rules`), no solo ocultar botones en UI. Rechazo sin `moderationNotes` → blocker.
 - Cálculos geo (Haversine, desnivel, RF-32, `calculateOfflineSizeMB`) viven en `core/domain/calculations.ts` como funciones puras testeables, no en vistas.
 - Componentización: vistas delgadas que componen (~150 líneas); forms colocalizados en `views/<feature>/`; primitivas reusables solo en `components/native/` vía `index.ts` (Regla de Tres). Prohibido crear archivos `Native*` y prohibido importar `ui/` web desde nativo. Componente nuevo sin reusar/grep previo → major.
+- Alcance HU: cada campo/botón visible debe trazarse a un criterio (`HU-0X Cn`). Campo o acción sin criterio → major (preguntar antes de crear, nunca inventar).
 
 Salida: tabla Severidad | Regla | Ubicación | Fix. Si el diff toca `firestore.rules`, exige leer ese archivo antes de opinar.

@@ -28,6 +28,15 @@ Antes de codificar CUALQUIER tarea ligada a una HU (HU-01…HU-10):
 
 Regla de oro: doc desactualizado = tarea bloqueada hasta confirmar. Rehacer por no preguntar es el fallo más caro del equipo.
 
+Comando del equipo para ejecutar HUs: `/hu-checklist HU-0X` (plantilla de 4 fases: planificar → codificar → validar → cerrar).
+
+## Alcance por HU (anti-invento)
+
+La HU y sus criterios de aceptación son el alcance exacto: **ni un campo, ni un botón, ni un filtro de más**.
+Todo elemento visible debe trazarse a un criterio (`HU-0X Cn`); lo que no está pedido no se crea.
+Si algo parece "necesario" pero no está en los criterios → se PREGUNTA al usuario antes de agregarlo,
+igual que con doc desactualizado. Los defaults del sistema (rol `user`, timestamps) no cuentan como campos.
+
 ## Arquitectura (Clean Architecture — respetar capas)
 
 ```

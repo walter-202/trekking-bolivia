@@ -4,6 +4,8 @@
  * Fully guarded for Expo / React Native environments where indexedDB is undefined.
  */
 
+import { appStorage } from './storage';
+
 const DB_NAME = 'TrekkingTileCacheDB';
 const DB_VERSION = 1;
 const TILE_STORE_NAME = 'tiles';
@@ -323,7 +325,10 @@ export class TileCacheDB {
   public static async getRegions(): Promise<OfflineRegion[]> {
     try {
       const db = await this.getDB();
-      if (!db) return [];
+      if (!db) {
+        const raw = await appStorage.getItem('offline_regions');
+        return raw ? JSON.parse(raw) : [];
+      }
 
       return new Promise((resolve) => {
         const transaction = db.transaction(REGION_STORE_NAME, 'readonly');
@@ -346,7 +351,12 @@ export class TileCacheDB {
   public static async saveRegion(region: OfflineRegion): Promise<void> {
     try {
       const db = await this.getDB();
-      if (!db) return;
+      if (!db) {
+        const regions = await this.getRegions();
+        const updated = regions.filter((r) => r.id !== region.id).concat(region);
+        await appStorage.setItem('offline_regions', JSON.stringify(updated));
+        return;
+      }
 
       return new Promise((resolve, reject) => {
         const transaction = db.transaction(REGION_STORE_NAME, 'readwrite');
@@ -364,7 +374,12 @@ export class TileCacheDB {
   public static async deleteRegion(id: string): Promise<void> {
     try {
       const db = await this.getDB();
-      if (!db) return;
+      if (!db) {
+        const regions = await this.getRegions();
+        const updated = regions.filter((r) => r.id !== id);
+        await appStorage.setItem('offline_regions', JSON.stringify(updated));
+        return;
+      }
 
       return new Promise((resolve, reject) => {
         const transaction = db.transaction(REGION_STORE_NAME, 'readwrite');

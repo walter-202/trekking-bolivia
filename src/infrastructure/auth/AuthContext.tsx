@@ -11,6 +11,7 @@ import {
 import { auth } from '../firebase/config';
 import { userProfileService } from '../database/userProfileService';
 import { UserRole, UserProfile } from '../../core/domain/types';
+import { appStorage } from '../persistence/storage';
 
 interface AuthContextType {
   currentUser: UserProfile | null;
@@ -121,8 +122,8 @@ const DEMO_PROFILES: Record<UserRole, UserProfile> = {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    // Check saved session in local storage
-    const saved = localStorage.getItem('trekking_auth_user');
+    // Check saved session in storage
+    const saved = appStorage.getItemSync('trekking_auth_user');
     return saved ? JSON.parse(saved) : DEMO_PROFILES.user;
   });
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
@@ -143,6 +144,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const profileUnsubRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
+    // Initialize storage from AsyncStorage
+    appStorage.initialize().then(() => {
+      const saved = appStorage.getItemSync('trekking_auth_user');
+      if (saved) {
+        try {
+          setCurrentUser(JSON.parse(saved));
+        } catch {}
+      }
+    });
+
     // Listen to Firebase Auth state
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);
@@ -166,7 +177,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 role,
               };
               setCurrentUser(syncedProfile);
-              localStorage.setItem('trekking_auth_user', JSON.stringify(syncedProfile));
+              appStorage.setItem('trekking_auth_user', JSON.stringify(syncedProfile));
             } else {
               // Initial user profile setup if document does not exist yet
               const initialRole = extractRoleFromDoc(undefined, user.email || undefined);
@@ -185,7 +196,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.warn('Initial profile write in Firestore warning:', err);
               });
               setCurrentUser(newProfile);
-              localStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
+              appStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
             }
             setLoading(false);
           },
@@ -225,7 +236,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role,
         };
         setCurrentUser(syncedProfile);
-        localStorage.setItem('trekking_auth_user', JSON.stringify(syncedProfile));
+        appStorage.setItem('trekking_auth_user', JSON.stringify(syncedProfile));
       } else {
         const initialRole = extractRoleFromDoc(undefined, user.email || email);
         const newProfile: UserProfile = {
@@ -241,7 +252,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         await userProfileService.createUserProfile(newProfile);
         setCurrentUser(newProfile);
-        localStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
+        appStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
       }
     } catch (err: any) {
       // Allow simulation / seed login for test credentials
@@ -251,12 +262,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
       if (adminSeed && adminSeed.passwords.some((p) => p.toLowerCase() === pass.toLowerCase())) {
         setCurrentUser(adminSeed.profile);
-        localStorage.setItem('trekking_auth_user', JSON.stringify(adminSeed.profile));
+        appStorage.setItem('trekking_auth_user', JSON.stringify(adminSeed.profile));
         return;
       }
       if (email === DEMO_PROFILES.user.email) {
         setCurrentUser(DEMO_PROFILES.user);
-        localStorage.setItem('trekking_auth_user', JSON.stringify(DEMO_PROFILES.user));
+        appStorage.setItem('trekking_auth_user', JSON.stringify(DEMO_PROFILES.user));
         return;
       }
       setError(err?.message || 'Error al iniciar sesión');
@@ -284,7 +295,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       await userProfileService.createUserProfile(newProfile);
       setCurrentUser(newProfile);
-      localStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
+      appStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
     } catch (err: any) {
       // In offline / fallback mode, register locally
       const localProfile: UserProfile = {
@@ -299,7 +310,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         createdAt: Date.now(),
       };
       setCurrentUser(localProfile);
-      localStorage.setItem('trekking_auth_user', JSON.stringify(localProfile));
+      appStorage.setItem('trekking_auth_user', JSON.stringify(localProfile));
     }
   };
 
@@ -329,7 +340,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // offline
         }
         setCurrentUser(syncedProfile);
-        localStorage.setItem('trekking_auth_user', JSON.stringify(syncedProfile));
+        appStorage.setItem('trekking_auth_user', JSON.stringify(syncedProfile));
       } else {
         const initialRole = extractRoleFromDoc(undefined, user.email || undefined);
         const newProfile: UserProfile = {
@@ -350,7 +361,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // offline
         }
         setCurrentUser(newProfile);
-        localStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
+        appStorage.setItem('trekking_auth_user', JSON.stringify(newProfile));
       }
     } catch (err: any) {
       // Graceful fallback for popup-blocked or simulated environments
@@ -367,7 +378,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         createdAt: Date.now(),
       };
       setCurrentUser(googleProfile);
-      localStorage.setItem('trekking_auth_user', JSON.stringify(googleProfile));
+      appStorage.setItem('trekking_auth_user', JSON.stringify(googleProfile));
     }
   };
 
@@ -382,13 +393,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // ignore offline
     }
     setCurrentUser(null);
-    localStorage.removeItem('trekking_auth_user');
+    appStorage.removeItem('trekking_auth_user');
   };
 
   const switchDemoRole = (role: UserRole) => {
     const profile = DEMO_PROFILES[role];
     setCurrentUser(profile);
-    localStorage.setItem('trekking_auth_user', JSON.stringify(profile));
+    appStorage.setItem('trekking_auth_user', JSON.stringify(profile));
   };
 
   const hasRole = (allowedRoles: UserRole[]): boolean => {

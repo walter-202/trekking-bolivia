@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": ["AGENTS.md", "DESIGN_RULES.md", "EXPO_GUIDE.md", "USER_STORIES.md"],
+  "instructions": ["AGENTS.md", "CLEAN_ARCH_RULES.md", "DESIGN_RULES.md", "EXPO_GUIDE.md", "USER_STORIES.md"],
   "lsp": {
     "typescript": {
       "enabled": true

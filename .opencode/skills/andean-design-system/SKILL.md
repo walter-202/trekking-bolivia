@@ -29,10 +29,33 @@ Fuente: `DESIGN_RULES.md` + `src/presentation/theme.ts`. `AndeanTheme` es la ÚN
 - **Drawer (≥60% viewport, ref 78%):** header logo + `ANDEAN TOPO GUIDE` + X; ficha usuario (avatar con anillo+pulse, nombre ✓, `@handle`, badge oro `Guía de Montaña`, mini-cards `Cumbres` / `GPS Fix ±2.4m`); secciones Exploración + Herramientas Pro; tarjeta offline (`4.2 GB / 64 GB` + barra verde + `sincronizada ✓`); footer Ajustes/Salir + `v2.8.4 Andean Engine ● Conectado`.
 - **Hojas claras:** `white #FFFFFF` sobre fondo oscuro, campos `Canvas Soft Tint`, foco verde.
 
+## Reutilizar antes de crear (obligatorio)
+
+Casa de primitivas nativas: `src/presentation/components/native/` (API pública en su `index.ts`:
+`Button`, `Field`, `Banner`). `ui/` es web (div/button) y NO se usa en nativo.
+
+1. ¿Existe en `components/native/index.ts`? Úsalo.
+2. Si no: `grep` en `views/` por si otro feature ya lo resolvió → extrae el común, no copies.
+3. Nueva primitiva solo por Regla de Tres o token del sistema, con variantes explícitas
+   (`tone: 'error' | 'success'`, nunca booleanos encadenados) y `accessibilityLabel`.
+4. Lo de un solo uso se queda colocalizado en `views/<feature>/` (ver `CLEAN_ARCH_RULES.md).
+
+## Skills externas de componentización (no reinventar)
+
+Instalar una vez por máquina con `npx skills`:
+
+| Skill | Cuándo cargarla |
+|---|---|
+| `expo-design-system` (de `npx skills add expo/skills`) | Crear/ordenar tokens y theme, librería de componentes, auditar drift (hex fuera del theme) |
+| `vercel-composition-patterns` (de `npx skills add vercel-labs/agent-skills --skill composition-patterns`) | Diseñar APIs de componentes: compound components, evitar boolean props, variantes explícitas |
+| `react-native-skills` — reglas `design-system-compound-components`, `ui-*` (mismo repo vercel) | Patrones RN concretos: `Pressable` sobre `TouchableOpacity`, `expo-image`, safe-area, menús/modales nativos |
+| `expo-native-ui` | Que la pantalla se sienta nativa (HIG, controles, SF Symbols) |
+| `expo-ui-full-reference` (de `npx skills add AlshehriAli0/agent-skills`) | Referencia total de `@expo/ui` (SwiftUI/Compose real) |
+
 ## Controles nativos
 
 Sheets, pickers, sliders, toggles, menús, form-sections → `@expo/ui` (SwiftUI/Compose real). Excepción: listas de datos → `FlatList`/`FlashList` (`@expo/ui` List NO virtualiza).
 
 ## Anti-slop (falla review)
 
-`.opacity-traslúcido` genérico sin token, gradientes morado-azul, placeholders grises "lorem", paleta de un solo hue, sombras pesadas, `className`/`div` en `Native*`, hex fuera de `theme.ts`, repetir un estilo 3× sin extraerlo a componente compartido.
+`.opacity-traslúcido` genérico sin token, gradientes morado-azul, placeholders grises "lorem", paleta de un solo hue, sombras pesadas, `className`/`div` en código nativo, prefijo `Native*` en archivos nuevos, hex fuera de `theme.ts`, repetir un estilo 3× sin extraerlo a componente compartido.

@@ -1,5 +1,5 @@
 ---
-description: Diseñador UI nativo andino — theme.ts, componentes Native*, dark-mode, @expo/ui
+description: Diseñador UI nativo andino — theme.ts, primitivas native/, dark-mode, @expo/ui
 mode: subagent
 temperature: 0.4
 permission:
@@ -17,7 +17,7 @@ Antes de codificar, carga `skill({ name: "andean-design-system" })` y lee `src/p
 
 Reglas duras:
 - `AndeanTheme` es la ÚNICA fuente de color/espaciado/tipo/radio. Cero hex hardcodeado fuera de `theme.ts`. Traduce clases web (`bg-[#051712]`) a `StyleSheet` + theme.
-- Primitivas: `View/Text/Pressable/TextInput/FlatList` + `lucide-react-native`. Prohibido `div/button/className` en `Native*`.
+- Primitivas: `View/Text/Pressable/TextInput/FlatList` + `lucide-react-native`. Prohibido `div/button/className` en código nativo, y prohibido el prefijo `Native*` en archivos nuevos (ver `CLEAN_ARCH_RULES.md` §2b).
 - Sistema: fondo `#051712`, superficie `#082019`/`#0E2E24`, borde `#12382c` 1px sin sombras pesadas, CTA `#064e3b`, acento `#10b981`/`#059669`, oro `#d97706`, alerta `#ef4444`. Micro-labels 10px bold uppercase sobre cada input, icono a la izquierda.
 - `SafeAreaView` siempre, dark-mode only, touch targets ≥ 44pt.
 - Hojas/controles nativos (sheets, pickers, switches, menús): prefiere `@expo/ui` (SwiftUI/Compose real); `@expo/ui` List NO es lista virtualizada — para datasets usa `FlatList`/`FlashList`.

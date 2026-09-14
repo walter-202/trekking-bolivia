@@ -41,12 +41,14 @@ src/
 │   └── persistence/        # useTrekkingStore (Zustand+AsyncStorage), storage.ts, tileCacheDB, tileDownloader
 ├── presentation/
 │   ├── theme.ts            # AndeanTheme — ÚNICA fuente de color/espaciado/tipo. No hardcodear hex fuera de aquí
-│   ├── components/native|ui|map|navigation/  # Native* = RN puro; sin <div>/<button> HTML
-│   └── views/explore|activity|record|moderation|profile|auth|testRunner/  # par Native* + Web cuando aplique
+│   ├── components/native|ui|map|navigation/  # native/ = primitivas RN (nombres canónicos); ui/ = web legacy, no usar en nativo
+│   └── views/explore|activity|record|moderation|profile|auth|testRunner/  # auth ya migrado a nombres canónicos; resto con prefijo legacy hasta migrar
 └── tests/domain.test.ts    # Tests solo de dominio + schemas
 ```
 
 Reglas de dependencia: `presentation → infrastructure → core/domain`. `core/domain` nunca importa RN/Expo/Firebase. Validar todo input externo con Zod (`src/infrastructure/api/schemas.ts`). Estado global solo en `useTrekkingStore`; nada de `localStorage`/`window`/`document` en código nativo (usar `storage.ts` con AsyncStorage y `expo-file-system`/`expo-sqlite` para tiles).
+
+**Componentización (detalle en `CLEAN_ARCH_RULES.md`):** vistas delgadas que componen (~150 líneas), forms de feature colocalizados (`views/<feature>/`), primitivas reusables SOLO en `src/presentation/components/native/` (vía su `index.ts`, Regla de Tres). **Prohibido el prefijo `Native*`** (error histórico): un concepto = un nombre canónico (`AuthView`, `Button`); la plataforma la da la carpeta. Antes de crear un componente: reusar → grep → extraer. `ui/` (web) no se usa en nativo.
 
 ## Convenciones obligatorias
 
@@ -80,6 +82,7 @@ Fondo `#051712`, superficie `#082019`/`#0E2E24`, borde `#12382c` 1px sin sombras
 ## Docs fuente (leer bajo demanda, no todo de golpe)
 
 - `DESIGN_RULES.md` — sistema visual completo (paleta, tipografía, drawer, formularios).
+- `CLEAN_ARCH_RULES.md` — capas, screaming/colocalización, presupuestos de vista, Regla de Tres.
 - `EXPO_GUIDE.md` — tabla de compatibilidad por capa y pasos de portabilidad.
 - `USER_STORIES.md` — HU-01…HU-10 con criterios de aceptación y trazabilidad a archivos.
 - `app.json` / `eas.json` — permisos, plugins (`expo-location`), perfiles build/submit.

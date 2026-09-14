@@ -25,7 +25,7 @@ Repo pinnado: `expo@57.0.22` · `react-native@0.86.3` · `react@19.2.3` · New A
 |---|---|
 | `localStorage` | `AsyncStorage` vía `src/infrastructure/persistence/storage.ts` |
 | IndexedDB (`tileCacheDB.ts`) | `expo-file-system` + `expo-sqlite` (misma interfaz repo) |
-| `window` / `document` | prohibido en `Native*`; usar APIs Expo/RN |
+| `window` / `document` | prohibido en código nativo; usar APIs Expo/RN |
 | Leaflet directo | solo dentro de `react-native-webview`, o migrar a `react-native-maps` / MapLibre |
 | Google login web | `expo-auth-session` o `@react-native-google-signin` |
 

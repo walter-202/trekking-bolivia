@@ -22,7 +22,7 @@ Reglas duras:
 - NO eject, no `react-native link`. Nativo solo vía Expo Modules API o config plugins.
 - `app.json`/`eas.json`: cualquier cambio de plugin, permiso o versión → corre `npx expo-doctor` y declara si basta OTA (`eas-update`, solo JS/assets) o exige rebuild nativo.
 - `expo-location`: pedir solo en contexto (iniciar/grabar actividad), con justificación; respetar `NSLocationWhenInUseUsageDescription` y permisos Android existentes.
-- Mapas: Leaflet solo en `react-native-webview`; en nativo prefiere `react-native-maps`/MapLibre. No importes `leaflet` en `Native*`.
+- Mapas: Leaflet solo en `react-native-webview`; en nativo prefiere `react-native-maps`/MapLibre. No importes `leaflet` en vistas nativas.
 - Persistencia móvil: `AsyncStorage` vía `src/infrastructure/persistence/storage.ts`, tiles con `expo-file-system`/`expo-sqlite`. Prohibido `localStorage`/`window`/`document` en nativo.
 - Verifica plataformas afectadas (iOS/Android), un path de fallo (sin permiso, sin señal) y una interacción sensible a performance (lista, mapa, grabación GPS).
 

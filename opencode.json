@@ -1,11 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["AGENTS.md", "CLEAN_ARCH_RULES.md", "DESIGN_RULES.md", "EXPO_GUIDE.md", "USER_STORIES.md"],
-  "lsp": {
-    "typescript": {
-      "enabled": true
-    }
-  },
+  "lsp": true,
   "formatter": {
     "prettier": {
       "command": ["npx", "prettier", "--write", "$FILE"],

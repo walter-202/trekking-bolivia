@@ -1,0 +1,38 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md", "DESIGN_RULES.md", "EXPO_GUIDE.md", "USER_STORIES.md"],
+  "lsp": {
+    "typescript": {
+      "enabled": true
+    }
+  },
+  "formatter": {
+    "prettier": {
+      "command": ["npx", "prettier", "--write", "$FILE"],
+      "extensions": [".ts", ".tsx", ".json", ".md"]
+    }
+  },
+  "permission": {
+    "skill": {
+      "*": "allow"
+    },
+    "bash": {
+      "*": "ask",
+      "npm test*": "allow",
+      "npm run lint*": "allow",
+      "npx tsc --noEmit*": "allow",
+      "npx expo-doctor*": "allow",
+      "npx tsc*": "ask",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow"
+    }
+  },
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    }
+  }
+}

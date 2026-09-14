@@ -10,7 +10,7 @@ import { NativeActivityView } from './presentation/views/activity/NativeActivity
 import { NativeRecordView } from './presentation/views/record/NativeRecordView';
 import { NativeModerationView } from './presentation/views/moderation/NativeModerationView';
 import { NativeProfileView } from './presentation/views/profile/NativeProfileView';
-import { NativeAuthView } from './presentation/views/auth/NativeAuthView';
+import { AuthView } from './presentation/views/auth/AuthView';
 import { NativeUnitTestView } from './presentation/views/testRunner/NativeUnitTestView';
 import { RouteModel, TabKey } from './core/domain/types';
 
@@ -80,7 +80,7 @@ function MainNavigator() {
         )}
 
         {activeTab === 'auth' && (
-          <NativeAuthView
+          <AuthView
             initialMode={authInitialMode}
             onBack={handleBackToPrevious}
             onSuccess={handleBackToPrevious}

@@ -73,6 +73,31 @@ export const ReviewActionSchema = z.object({
   moderationNotes: z.string().min(3, 'Debe incluir un motivo u observaciones claras para el autor'),
 });
 
+export const LoginSchema = z.object({
+  email: z.string().trim().min(1, 'Introduce tu correo electrónico.').email('Introduce un correo electrónico válido.'),
+  password: z.string().min(1, 'Introduce tu contraseña.'),
+});
+
+export const RegisterSchema = z
+  .object({
+    name: z.string().trim().min(3, 'Por favor ingresa tu nombre completo.'),
+    email: z.string().trim().min(1, 'Introduce un correo electrónico.').email('Introduce un correo electrónico válido.'),
+    username: z
+      .string()
+      .trim()
+      .regex(/^[a-zA-Z0-9_.]{3,30}$/, 'El usuario debe tener 3-30 caracteres (letras, números, _ .).')
+      .optional(),
+    password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres.'),
+    confirmPassword: z.string().min(1, 'Repite tu contraseña.'),
+    acceptTerms: z
+      .boolean()
+      .refine((v) => v === true, 'Debes aceptar los términos y las normas de seguridad en montaña.'),
+  })
+  .refine((data) => data.password === data.confirmPassword, 'Las contraseñas no coinciden.');
+
+export type LoginInput = z.infer<typeof LoginSchema>;
+export type RegisterInput = z.infer<typeof RegisterSchema>;
+
 export const BulkSyncSchema = z.object({
   activities: z.array(ActivityLogSchema),
   drafts: z.array(RouteCreationSchema).optional(),

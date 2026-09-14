@@ -9,8 +9,8 @@ Documento canónico que define las **10 Historias de Usuario (HU)** que conforma
 
 | ID | Historia de Usuario | Rol Principal | Componente / Archivo Clave | Estado en V1 |
 |---|---|---|---|:---:|
-| **HU-01** | Registrar Cuenta | Visitante | [`AuthModal.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/components/auth/AuthModal.tsx), [`AuthContext.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/infrastructure/auth/AuthContext.tsx) | **100% Completada** |
-| **HU-02** | Iniciar y Cerrar Sesión | Usuario / Moderador / Admin | [`AuthModal.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/components/auth/AuthModal.tsx), [`AndeanSidebar.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/components/navigation/AndeanSidebar.tsx) | **100% Completada** |
+| **HU-01** | Registrar Cuenta | Visitante | [`NativeAuthView.tsx`](./src/presentation/views/auth/NativeAuthView.tsx) (+ [`AuthModal.tsx`](./src/presentation/components/auth/AuthModal.tsx) web), [`AuthContext.tsx`](./src/infrastructure/auth/AuthContext.tsx), [`schemas.ts`](./src/infrastructure/api/schemas.ts) (`RegisterSchema`) | **100% Completada** |
+| **HU-02** | Iniciar y Cerrar Sesión | Usuario / Moderador / Admin | [`NativeAuthView.tsx`](./src/presentation/views/auth/NativeAuthView.tsx) (+ [`AuthModal.tsx`](./src/presentation/components/auth/AuthModal.tsx) web), [`AndeanSidebar.tsx`](./src/presentation/components/navigation/AndeanSidebar.tsx), [`schemas.ts`](./src/infrastructure/api/schemas.ts) (`LoginSchema`) | **100% Completada** |
 | **HU-03** | Explorar y Consultar una Ruta | Visitante / Usuario Registrado | [`ExploreView.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/views/explore/ExploreView.tsx), [`TrekkingMap.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/components/map/TrekkingMap.tsx) | **100% Completada** |
 | **HU-04** | Descargar Ruta para Consulta Offline | Usuario | [`tileCacheDB.ts`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/infrastructure/persistence/tileCacheDB.ts), [`useTrekkingStore.ts`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/infrastructure/persistence/useTrekkingStore.ts) | **100% Completada** |
 | **HU-05** | Compartir una Ruta Publicada | Usuario | [`ExploreView.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/views/explore/ExploreView.tsx) (Modal de difusión) | **100% Completada** |
@@ -40,9 +40,10 @@ Documento canónico que define las **10 Historias de Usuario (HU)** que conforma
   5. El sistema debe mostrar un mensaje confirmando que el registro fue realizado correctamente.
   6. Después de confirmar el registro, el sistema debe dirigir al usuario a la pantalla de inicio de sesión definida en la HU-02.
 * **Evidencia de Implementación**:
-  - Interfaz: [`src/presentation/components/auth/AuthModal.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/components/auth/AuthModal.tsx) (Modo `register`).
-  - Lógica de autenticación: [`src/infrastructure/auth/AuthContext.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/infrastructure/auth/AuthContext.tsx) (`register()`).
-  - Base de datos: [`src/infrastructure/database/userProfileService.ts`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/infrastructure/database/userProfileService.ts) (Creación de perfil con `role: 'user'`).
+  - Interfaz nativa: [`src/presentation/views/auth/NativeAuthView.tsx`](./src/presentation/views/auth/NativeAuthView.tsx) (modos `login`/`register`, validación Zod, confirmar contraseña, términos, toggle de visibilidad, mensajes éxito/error).
+  - Interfaz web: [`src/presentation/components/auth/AuthModal.tsx`](./src/presentation/components/auth/AuthModal.tsx) (Modo `register`).
+  - Validación: [`src/infrastructure/api/schemas.ts`](./src/infrastructure/api/schemas.ts) (`RegisterSchema`: nombre, email, usuario, clave ≥ 8, confirmación, términos; testeado en `src/tests/domain.test.ts`).
+  - Lógica de autenticación: [`src/infrastructure/auth/AuthContext.tsx`](./src/infrastructure/auth/AuthContext.tsx) (`register()` con rol `user` por defecto; fallbacks locales solo ante error de red).
 
 ---
 
@@ -64,8 +65,9 @@ Documento canónico que define las **10 Historias de Usuario (HU)** que conforma
   9. Identificación del usuario activo con su avatar, nombre verificado y badge de rol en cabecera y sidebar.
   10. Cierre de sesión seguro desde el perfil o botón "Salir" del sidebar.
 * **Evidencia de Implementación**:
-  - Interfaz: [`src/presentation/components/auth/AuthModal.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/components/auth/AuthModal.tsx), [`src/presentation/components/navigation/AndeanSidebar.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/components/navigation/AndeanSidebar.tsx), [`src/presentation/views/profile/ProfileView.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/presentation/views/profile/ProfileView.tsx).
-  - Estado y Contexto: [`src/infrastructure/auth/AuthContext.tsx`](file:///d:/TRABAJO/uni/INGSOFT/trekking-bolivia/src/infrastructure/auth/AuthContext.tsx) (`login()`, `logout()`, `currentUser`).
+  - Interfaz nativa: [`src/presentation/views/auth/NativeAuthView.tsx`](./src/presentation/views/auth/NativeAuthView.tsx), [`src/presentation/components/navigation/AndeanSidebar.tsx`](./src/presentation/components/navigation/AndeanSidebar.tsx), [`src/presentation/views/profile/ProfileView.tsx`](./src/presentation/views/profile/ProfileView.tsx).
+  - Validación: [`src/infrastructure/api/schemas.ts`](./src/infrastructure/api/schemas.ts) (`LoginSchema`; credenciales inválidas nunca inician sesión — fallbacks solo con error de red).
+  - Estado y Contexto: [`src/infrastructure/auth/AuthContext.tsx`](./src/infrastructure/auth/AuthContext.tsx) (`login()`, `logout()`, `currentUser`).
 
 ---
 

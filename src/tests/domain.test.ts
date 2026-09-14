@@ -4,7 +4,7 @@ import {
   suggestRouteDifficulty,
   calculateOfflineSizeMB,
 } from '../core/domain/calculations';
-import { RouteCreationSchema, ActivityLogSchema } from '../infrastructure/api/schemas';
+import { RouteCreationSchema, ActivityLogSchema, LoginSchema, RegisterSchema } from '../infrastructure/api/schemas';
 
 export interface TestResult {
   name: string;
@@ -98,6 +98,40 @@ export function runAllUnitTests(): TestResult[] {
     });
   } catch (err: any) {
     results.push({ name: 'Validación de Esquema de Rutas con Zod', passed: false, message: err.message });
+  }
+
+  // Test 5: Zod Auth Validation (HU-01 / HU-02)
+  try {
+    const validRegister = {
+      name: 'Mateo Condori',
+      email: 'andino@trekbolivia.bo',
+      username: 'caminante_bolivia',
+      password: 'Montaña123',
+      confirmPassword: 'Montaña123',
+      acceptTerms: true,
+    };
+    const validLogin = { email: 'andino@trekbolivia.bo', password: 'Montaña123' };
+    const mismatchPasswords = { ...validRegister, confirmPassword: 'Otra12345' };
+    const shortPassword = { ...validRegister, password: 'abc', confirmPassword: 'abc' };
+    const termsRejected = { ...validRegister, acceptTerms: false };
+    const badEmailLogin = { email: 'no-es-correo', password: 'Montaña123' };
+
+    const passed =
+      RegisterSchema.safeParse(validRegister).success &&
+      LoginSchema.safeParse(validLogin).success &&
+      !RegisterSchema.safeParse(mismatchPasswords).success &&
+      !RegisterSchema.safeParse(shortPassword).success &&
+      !RegisterSchema.safeParse(termsRejected).success &&
+      !LoginSchema.safeParse(badEmailLogin).success;
+    results.push({
+      name: 'Validación de Auth con Zod (HU-01/HU-02)',
+      passed,
+      message: passed
+        ? 'Registro/login válidos aprobados; mismatch, clave corta, términos y email inválido rechazados'
+        : 'Fallo en validación de esquemas de auth',
+    });
+  } catch (err: any) {
+    results.push({ name: 'Validación de Auth con Zod (HU-01/HU-02)', passed: false, message: err.message });
   }
 
   return results;

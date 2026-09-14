@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "users": {
+      "title": "users",
+      "description": "Perfiles de usuarios, senderistas y moderadores de Trekking Bolivia",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email", "description": "Correo electrónico" },
+        "displayName": { "type": "string", "description": "Nombre completo" },
+        "username": { "type": "string", "description": "Identificador único @usuario" },
+        "role": { "type": "string", "enum": ["user", "moderator", "admin"], "description": "Rol RBAC" },
+        "isBlocked": { "type": "boolean", "description": "Estado de bloqueo administrativo" },
+        "summitsCount": { "type": "number", "description": "Cantidad de cumbres registradas" },
+        "gpsAccuracy": { "type": "string", "description": "Última precisión GPS reportada" },
+        "createdAt": { "type": "number", "description": "Timestamp de creación" }
+      },
+      "required": ["uid", "email", "displayName", "role", "isBlocked", "createdAt"]
+    },
+    "routes": {
+      "title": "routes",
+      "description": "Rutas de trekking, senderismo y montaña en Bolivia",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "region": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["facil", "moderado", "dificil", "experto"] },
+        "modality": { "type": "string", "enum": ["solo", "acompañado"] },
+        "status": { "type": "string", "enum": ["draft", "in_review", "published", "rejected"] },
+        "isPrivate": { "type": "boolean" },
+        "creatorId": { "type": "string" },
+        "creatorName": { "type": "string" },
+        "distanceKm": { "type": "number" },
+        "durationMinutes": { "type": "number" },
+        "waypoints": { "type": "array" },
+        "checkpoints": { "type": "array" },
+        "photos": { "type": "array" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["id", "title", "difficulty", "status", "creatorId", "distanceKm"]
+    },
+    "activities": {
+      "title": "activities",
+      "description": "Historial y seguimiento en vivo de actividades de trekking por usuario",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "routeId": { "type": "string" },
+        "routeTitle": { "type": "string" },
+        "status": { "type": "string", "enum": ["in_progress", "paused", "completed", "incomplete"] },
+        "startedAt": { "type": "number" },
+        "finishedAt": { "type": "number" },
+        "distanceCoveredKm": { "type": "number" },
+        "remainingDistanceKm": { "type": "number" },
+        "durationSeconds": { "type": "number" },
+        "recordedPoints": { "type": "array" },
+        "completedCheckpoints": { "type": "array" },
+        "isSynced": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "userId", "routeId", "status", "distanceCoveredKm"]
+    },
+    "reviews": {
+      "title": "reviews",
+      "description": "Auditoría, aprobaciones y rechazos de rutas por moderadores",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "routeId": { "type": "string" },
+        "moderatorId": { "type": "string" },
+        "moderatorName": { "type": "string" },
+        "status": { "type": "string", "enum": ["approved", "rejected"] },
+        "observations": { "type": "string" },
+        "reviewedAt": { "type": "number" }
+      },
+      "required": ["id", "routeId", "moderatorId", "status", "reviewedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "Perfiles de usuarios, senderistas y moderadores de Trekking Bolivia"
+    },
+    "/routes/{routeId}": {
+      "schema": "routes",
+      "description": "Rutas de trekking, senderismo y montaña en Bolivia"
+    },
+    "/activities/{activityId}": {
+      "schema": "activities",
+      "description": "Historial y seguimiento en vivo de actividades de trekking por usuario"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "reviews",
+      "description": "Auditoría, aprobaciones y rechazos de rutas por moderadores"
+    }
+  }
+}

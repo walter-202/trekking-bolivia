@@ -1,0 +1,6 @@
+{
+  "name": "Trekking Bolivia",
+  "description": "Plataforma de trekking para exploración, navegación offline, registro y moderación de rutas en Bolivia.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
